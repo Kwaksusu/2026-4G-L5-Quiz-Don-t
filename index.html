@@ -50,7 +50,7 @@
       position: relative;
       z-index: 1;
       width: 100%;
-      max-width: 620px;
+      max-width: 680px;
     }
 
     /* ── 헤더 ── */
@@ -60,14 +60,14 @@
     }
     .header h1 {
       font-family: 'Nunito', sans-serif;
-      font-size: 2rem;
+      font-size: 2.4rem;
       font-weight: 900;
       color: var(--green-dark);
       letter-spacing: -0.5px;
     }
     .header h1 span { color: var(--red); }
     .header p {
-      font-size: 0.85rem;
+      font-size: 1rem;
       color: var(--muted);
       margin-top: 4px;
     }
@@ -88,7 +88,7 @@
     }
     .progress-label {
       text-align: right;
-      font-size: 0.8rem;
+      font-size: 0.95rem;
       color: var(--muted);
       margin-bottom: 8px;
       font-weight: 700;
@@ -98,20 +98,20 @@
     .card {
       background: var(--card);
       border-radius: var(--radius);
-      padding: 28px 28px 24px;
+      padding: 32px 32px 28px;
       box-shadow: 0 6px 28px rgba(0,0,0,0.08);
     }
 
     .q-type-badge {
       display: inline-block;
       font-family: 'Nunito', sans-serif;
-      font-size: 0.72rem;
+      font-size: 0.85rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.8px;
-      padding: 3px 10px;
+      padding: 4px 12px;
       border-radius: 999px;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
     .badge-choice { background: #e8f5e9; color: var(--green-dark); }
     .badge-ox     { background: #fff3e0; color: #e65100; }
@@ -119,34 +119,34 @@
     .badge-translate { background: #fce4ec; color: #c62828; }
 
     .question {
-      font-size: 1.1rem;
+      font-size: 1.5rem;
       font-weight: 700;
       color: var(--text);
-      line-height: 1.65;
-      margin-bottom: 22px;
+      line-height: 1.6;
+      margin-bottom: 24px;
     }
     .dialogue {
       background: #f5f5f5;
       border-left: 4px solid var(--green);
       border-radius: 8px;
-      padding: 12px 14px;
+      padding: 14px 16px;
       margin-top: 10px;
-      font-size: 0.95rem;
+      font-size: 1.15rem;
       font-weight: 500;
       line-height: 1.8;
     }
     .dialogue .name { font-weight: 700; color: var(--green-dark); }
 
     /* ── 선택지 ── */
-    .options { display: flex; flex-direction: column; gap: 10px; }
+    .options { display: flex; flex-direction: column; gap: 12px; }
 
     .opt-btn {
       border: 2.5px solid #ddd;
       background: white;
       border-radius: 12px;
-      padding: 14px 18px;
+      padding: 16px 20px;
       font-family: 'Noto Sans KR', sans-serif;
-      font-size: 0.97rem;
+      font-size: 1.2rem;
       font-weight: 700;
       color: var(--text);
       cursor: pointer;
@@ -168,9 +168,9 @@
       border: 2.5px solid #ddd;
       background: white;
       border-radius: 12px;
-      padding: 24px;
+      padding: 28px;
       font-family: 'Nunito', sans-serif;
-      font-size: 2.4rem;
+      font-size: 2.8rem;
       font-weight: 900;
       cursor: pointer;
       text-align: center;
@@ -188,8 +188,8 @@
     .read-input {
       border: 2.5px solid #ddd;
       border-radius: 12px;
-      padding: 12px 16px;
-      font-size: 1rem;
+      padding: 14px 18px;
+      font-size: 1.2rem;
       font-family: 'Nunito', sans-serif;
       font-weight: 700;
       color: var(--text);
@@ -205,9 +205,9 @@
       color: white;
       border: none;
       border-radius: 12px;
-      padding: 13px;
+      padding: 14px;
       font-family: 'Nunito', sans-serif;
-      font-size: 1rem;
+      font-size: 1.1rem;
       font-weight: 800;
       cursor: pointer;
       transition: background 0.15s, transform 0.1s;
@@ -216,10 +216,10 @@
 
     /* ── 피드백 ── */
     .feedback {
-      margin-top: 16px;
+      margin-top: 18px;
       border-radius: 12px;
-      padding: 12px 16px;
-      font-size: 0.92rem;
+      padding: 14px 18px;
+      font-size: 1.1rem;
       font-weight: 700;
       display: none;
       line-height: 1.5;
@@ -229,15 +229,15 @@
     .feedback.wrong-fb   { background: #fff0f0; color: var(--red); }
 
     .next-btn {
-      margin-top: 14px;
+      margin-top: 16px;
       width: 100%;
       background: var(--yellow);
       color: #5a3e00;
       border: none;
       border-radius: 12px;
-      padding: 13px;
+      padding: 15px;
       font-family: 'Nunito', sans-serif;
-      font-size: 1rem;
+      font-size: 1.2rem;
       font-weight: 800;
       cursor: pointer;
       display: none;
@@ -253,7 +253,7 @@
     }
     #result.show { display: block; }
     .score-circle {
-      width: 130px; height: 130px;
+      width: 140px; height: 140px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--green), var(--yellow));
       display: flex; align-items: center; justify-content: center;
@@ -262,19 +262,19 @@
     }
     .score-circle span {
       font-family: 'Nunito', sans-serif;
-      font-size: 2.2rem;
+      font-size: 2.5rem;
       font-weight: 900;
       color: white;
     }
     #result h2 {
       font-family: 'Nunito', sans-serif;
-      font-size: 1.6rem;
+      font-size: 1.9rem;
       font-weight: 900;
       color: var(--text);
       margin-bottom: 8px;
     }
     #result p {
-      font-size: 0.95rem;
+      font-size: 1.1rem;
       color: var(--muted);
       margin-bottom: 24px;
     }
@@ -283,9 +283,9 @@
       color: white;
       border: none;
       border-radius: 12px;
-      padding: 14px 36px;
+      padding: 15px 40px;
       font-family: 'Nunito', sans-serif;
-      font-size: 1.05rem;
+      font-size: 1.2rem;
       font-weight: 800;
       cursor: pointer;
       transition: background 0.15s, transform 0.1s;
@@ -293,9 +293,10 @@
     .restart-btn:hover { background: var(--green-dark); transform: translateY(-2px); }
 
     @media (max-width: 480px) {
-      .header h1 { font-size: 1.5rem; }
-      .card { padding: 20px 18px; }
-      .question { font-size: 1rem; }
+      .header h1 { font-size: 1.8rem; }
+      .card { padding: 22px 20px; }
+      .question { font-size: 1.25rem; }
+      .opt-btn { font-size: 1.05rem; }
     }
   </style>
 </head>

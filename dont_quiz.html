@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Don't ~, please! 퀴즈</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Sans+KR:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fff9f0;
+      --card: #ffffff;
+      --green: #3dba6f;
+      --green-dark: #2a9456;
+      --yellow: #ffd84d;
+      --yellow-dark: #e6b800;
+      --red: #ff5e5e;
+      --blue: #4a90e2;
+      --text: #2d2d2d;
+      --muted: #888;
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    /* ── 별 배경 ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(circle, #ffd84d44 1px, transparent 1px),
+        radial-gradient(circle, #3dba6f33 1px, transparent 1px);
+      background-size: 48px 48px, 72px 72px;
+      background-position: 0 0, 24px 24px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 620px;
+    }
+
+    /* ── 헤더 ── */
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .header h1 {
+      font-family: 'Nunito', sans-serif;
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--green-dark);
+      letter-spacing: -0.5px;
+    }
+    .header h1 span { color: var(--red); }
+    .header p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* ── 진행 바 ── */
+    .progress-wrap {
+      background: #e0e0e0;
+      border-radius: 999px;
+      height: 10px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), var(--yellow));
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+    .progress-label {
+      text-align: right;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    /* ── 카드 ── */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 28px 28px 24px;
+      box-shadow: 0 6px 28px rgba(0,0,0,0.08);
+    }
+
+    .q-type-badge {
+      display: inline-block;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 14px;
+    }
+    .badge-choice { background: #e8f5e9; color: var(--green-dark); }
+    .badge-ox     { background: #fff3e0; color: #e65100; }
+    .badge-read   { background: #e3f2fd; color: var(--blue); }
+    .badge-translate { background: #fce4ec; color: #c62828; }
+
+    .question {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.65;
+      margin-bottom: 22px;
+    }
+    .dialogue {
+      background: #f5f5f5;
+      border-left: 4px solid var(--green);
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-top: 10px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      line-height: 1.8;
+    }
+    .dialogue .name { font-weight: 700; color: var(--green-dark); }
+
+    /* ── 선택지 ── */
+    .options { display: flex; flex-direction: column; gap: 10px; }
+
+    .opt-btn {
+      border: 2.5px solid #ddd;
+      background: white;
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 0.97rem;
+      font-weight: 700;
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    }
+    .opt-btn:hover {
+      border-color: var(--green);
+      background: #f0fdf4;
+      transform: translateY(-2px);
+    }
+    .opt-btn.correct  { border-color: var(--green); background: #e8f5e9; color: var(--green-dark); pointer-events: none; }
+    .opt-btn.wrong    { border-color: var(--red);   background: #fff0f0; color: var(--red);         pointer-events: none; }
+    .opt-btn.disabled { pointer-events: none; opacity: 0.5; }
+
+    /* OX 버튼 */
+    .ox-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .ox-btn {
+      border: 2.5px solid #ddd;
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 2.4rem;
+      font-weight: 900;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    }
+    .ox-btn:hover { transform: translateY(-3px); }
+    .ox-btn.o:hover { border-color: var(--green); background: #f0fdf4; }
+    .ox-btn.x:hover { border-color: var(--red);   background: #fff0f0; }
+    .ox-btn.correct  { border-color: var(--green); background: #e8f5e9; pointer-events: none; }
+    .ox-btn.wrong    { border-color: var(--red);   background: #fff0f0; pointer-events: none; }
+    .ox-btn.disabled { pointer-events: none; opacity: 0.5; }
+
+    /* 읽기 문제 인풋 */
+    .read-wrap { display: flex; flex-direction: column; gap: 10px; }
+    .read-input {
+      border: 2.5px solid #ddd;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 1rem;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .read-input:focus { border-color: var(--blue); }
+    .read-input.correct { border-color: var(--green); background: #e8f5e9; }
+    .read-input.wrong   { border-color: var(--red);   background: #fff0f0; }
+
+    .submit-btn {
+      background: var(--green);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 13px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .submit-btn:hover { background: var(--green-dark); transform: translateY(-2px); }
+
+    /* ── 피드백 ── */
+    .feedback {
+      margin-top: 16px;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      display: none;
+      line-height: 1.5;
+    }
+    .feedback.show { display: block; }
+    .feedback.correct-fb { background: #e8f5e9; color: var(--green-dark); }
+    .feedback.wrong-fb   { background: #fff0f0; color: var(--red); }
+
+    .next-btn {
+      margin-top: 14px;
+      width: 100%;
+      background: var(--yellow);
+      color: #5a3e00;
+      border: none;
+      border-radius: 12px;
+      padding: 13px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: none;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .next-btn.show { display: block; }
+    .next-btn:hover { background: var(--yellow-dark); transform: translateY(-2px); }
+
+    /* ── 결과 ── */
+    #result {
+      display: none;
+      text-align: center;
+    }
+    #result.show { display: block; }
+    .score-circle {
+      width: 130px; height: 130px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), var(--yellow));
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+      box-shadow: 0 8px 24px rgba(61,186,111,0.35);
+    }
+    .score-circle span {
+      font-family: 'Nunito', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: white;
+    }
+    #result h2 {
+      font-family: 'Nunito', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    #result p {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .restart-btn {
+      background: var(--green);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 36px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .restart-btn:hover { background: var(--green-dark); transform: translateY(-2px); }
+
+    @media (max-width: 480px) {
+      .header h1 { font-size: 1.5rem; }
+      .card { padding: 20px 18px; }
+      .question { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <h1>🚫 <span>Don't</span> ~, please! Quiz</h1>
+    <p>배운 표현을 확인해 보세요!</p>
+  </div>
+
+  <div class="progress-label" id="prog-label">1 / 15</div>
+  <div class="progress-wrap">
+    <div class="progress-bar" id="prog-bar" style="width: 6.67%"></div>
+  </div>
+
+  <div class="card" id="quiz-card">
+    <!-- 동적 렌더링 -->
+  </div>
+
+  <div class="card" id="result" style="margin-top:0;">
+    <div class="score-circle">
+      <span id="score-txt">0/15</span>
+    </div>
+    <h2 id="result-title">수고했어요!</h2>
+    <p id="result-msg">결과를 확인하세요.</p>
+    <button class="restart-btn" onclick="restart()">🔄 다시 풀기</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   퀴즈 데이터 (15문항)
+   type: "choice" | "ox" | "translate" | "fill"
+   cor: 정답 인덱스 (choice/ox) 또는 정답 문자열 배열 (fill)
+============================================================ */
+const questions = [
+  // ── 이지선다: 우리말 → 영어 ──────────────────────────────
+  {
+    type: "choice",
+    q: "다음 뜻에 알맞은 영어 표현을 고르세요.\n\n<b>뛰지 마세요.</b>",
+    opts: ["Don't run, please.", "Don't eat, please."],
+    cor: 0
+  },
+  {
+    type: "choice",
+    q: "다음 뜻에 알맞은 영어 표현을 고르세요.\n\n<b>밀지 마세요.</b>",
+    opts: ["Don't talk, please.", "Don't push, please."],
+    cor: 1
+  },
+  {
+    type: "choice",
+    q: "다음 뜻에 알맞은 영어 표현을 고르세요.\n\n<b>들어오지 마세요.</b>",
+    opts: ["Don't enter, please.", "Don't touch, please."],
+    cor: 0
+  },
+  {
+    type: "choice",
+    q: "다음 뜻에 알맞은 영어 표현을 고르세요.\n\n<b>만지지 마세요.</b>",
+    opts: ["Don't run, please.", "Don't touch, please."],
+    cor: 1
+  },
+  {
+    type: "choice",
+    q: "다음 뜻에 알맞은 영어 표현을 고르세요.\n\n<b>먹지 마세요.</b>",
+    opts: ["Don't eat, please.", "Don't push, please."],
+    cor: 0
+  },
+  // ── 이지선다: 영어 → 우리말 ──────────────────────────────
+  {
+    type: "choice",
+    q: "<b>Don't talk, please.</b>의 올바른 뜻을 고르세요.",
+    opts: ["만지지 마세요.", "말하지 마세요."],
+    cor: 1
+  },
+  {
+    type: "choice",
+    q: "<b>Don't run, please.</b>의 올바른 뜻을 고르세요.",
+    opts: ["뛰지 마세요.", "먹지 마세요."],
+    cor: 0
+  },
+  // ── 대화문 빈칸 ──────────────────────────────────────────
+  {
+    type: "choice",
+    q: "빈칸에 들어갈 알맞은 표현을 고르세요.",
+    dialogue: [
+      ["Dito", "Shh. ________, please."],
+      ["Yeji", "Okay. Sorry!"]
+    ],
+    opts: ["Don't talk", "Don't push"],
+    cor: 0
+  },
+  {
+    type: "choice",
+    q: "빈칸에 들어갈 알맞은 표현을 고르세요.",
+    dialogue: [
+      ["Lien", "________, Minh. Just look, please."],
+      ["Minh", "Oh, I'm sorry."]
+    ],
+    opts: ["Don't eat", "Don't touch"],
+    cor: 1
+  },
+  {
+    type: "choice",
+    q: "빈칸에 들어갈 알맞은 표현을 고르세요.",
+    dialogue: [
+      ["Siyun", "________, please."],
+      ["Sia", "Okay. I'm sorry."]
+    ],
+    opts: ["Don't run", "Don't enter"],
+    cor: 0
+  },
+  // ── OX 문제 ───────────────────────────────────────────────
+  {
+    type: "ox",
+    q: "문장과 뜻이 바르게 연결되었나요?",
+    dialogue: null,
+    sentence: "<b>Don't enter, please.</b>  →  들어오지 마세요.",
+    cor: "O"
+  },
+  {
+    type: "ox",
+    q: "문장과 뜻이 바르게 연결되었나요?",
+    sentence: "<b>Don't push, please.</b>  →  만지지 마세요.",
+    cor: "X"
+  },
+  {
+    type: "ox",
+    q: "문장과 뜻이 바르게 연결되었나요?",
+    sentence: "<b>Don't eat, please.</b>  →  먹지 마세요.",
+    cor: "O"
+  },
+  // ── 오지선다 ─────────────────────────────────────────────
+  {
+    type: "choice",
+    q: "다음 상황에서 쓸 수 있는 가장 알맞은 표현을 고르세요.\n\n<b>마트에서 친구가 과일을 손으로 만지려 해요.</b>",
+    opts: [
+      "Don't run, please.",
+      "Don't eat, please.",
+      "Don't touch, please.",
+      "Don't push, please.",
+      "Don't talk, please."
+    ],
+    cor: 2
+  },
+  {
+    type: "choice",
+    q: "다음 상황에서 쓸 수 있는 가장 알맞은 표현을 고르세요.\n\n<b>도서관에서 친구가 크게 이야기하고 있어요.</b>",
+    opts: [
+      "Don't enter, please.",
+      "Don't run, please.",
+      "Don't touch, please.",
+      "Don't talk, please.",
+      "Don't push, please."
+    ],
+    cor: 3
+  }
+];
+
+let idx = 0, score = 0, answered = false;
+
+function render() {
+  const q = questions[idx];
+  const card = document.getElementById('quiz-card');
+
+  // 배지
+  const badgeMap = {
+    choice: ['choice', '선택형'],
+    ox:     ['ox',     'O / X'],
+    translate: ['translate', '해석'],
+    fill:   ['read',   '쓰기']
+  };
+  const [badgeCls, badgeTxt] = badgeMap[q.type] || ['choice','선택형'];
+
+  // 대화문 HTML
+  let dialogueHTML = '';
+  if (q.dialogue) {
+    dialogueHTML = '<div class="dialogue">' +
+      q.dialogue.map(([name, line]) =>
+        `<span class="name">${name}:</span> ${line}`
+      ).join('<br>') +
+    '</div>';
+  }
+  if (q.sentence) {
+    dialogueHTML = `<div class="dialogue">${q.sentence}</div>`;
+  }
+
+  // 본문 q 줄바꿈 처리
+  const qHTML = q.q.replace(/\n/g, '<br>');
+
+  let choicesHTML = '';
+  if (q.type === 'choice') {
+    choicesHTML = `<div class="options">` +
+      q.opts.map((o, i) =>
+        `<button class="opt-btn" data-idx="${i}" onclick="pickChoice(${i})">${o}</button>`
+      ).join('') +
+    `</div>`;
+  } else if (q.type === 'ox') {
+    choicesHTML = `<div class="ox-wrap">
+      <button class="ox-btn o" onclick="pickOX('O')">⭕</button>
+      <button class="ox-btn x" onclick="pickOX('X')">❌</button>
+    </div>`;
+  }
+
+  card.innerHTML = `
+    <span class="q-type-badge badge-${badgeCls}">${badgeTxt}</span>
+    <div class="question">${qHTML}</div>
+    ${dialogueHTML}
+    <div style="margin-top:18px">${choicesHTML}</div>
+    <div class="feedback" id="fb"></div>
+    <button class="next-btn" id="next-btn" onclick="next()">
+      ${idx < questions.length - 1 ? '다음 문제 →' : '결과 보기 🎉'}
+    </button>
+  `;
+}
+
+function showFeedback(isCorrect, correctAns) {
+  const fb = document.getElementById('fb');
+  const nb = document.getElementById('next-btn');
+  answered = true;
+  if (isCorrect) {
+    score++;
+    fb.className = 'feedback show correct-fb';
+    fb.textContent = '✅ 정답!';
+  } else {
+    fb.className = 'feedback show wrong-fb';
+    fb.textContent = `❌ 오답! 정답: ${correctAns}`;
+  }
+  nb.className = 'next-btn show';
+  updateProgress();
+}
+
+function pickChoice(i) {
+  if (answered) return;
+  const btns = document.querySelectorAll('.opt-btn');
+  const q = questions[idx];
+  btns.forEach((b, bi) => {
+    if (bi === q.cor) b.classList.add('correct');
+    else b.classList.add(bi === i ? 'wrong' : 'disabled');
+  });
+  showFeedback(i === q.cor, q.opts[q.cor]);
+}
+
+function pickOX(val) {
+  if (answered) return;
+  const q = questions[idx];
+  const btns = document.querySelectorAll('.ox-btn');
+  btns.forEach(b => {
+    const bval = b.classList.contains('o') ? 'O' : 'X';
+    if (bval === q.cor) b.classList.add('correct');
+    else b.classList.add(bval === val ? 'wrong' : 'disabled');
+  });
+  showFeedback(val === q.cor, q.cor === 'O' ? '⭕ (O)' : '❌ (X)');
+}
+
+function next() {
+  idx++;
+  answered = false;
+  if (idx >= questions.length) {
+    showResult();
+  } else {
+    render();
+    updateProgress();
+  }
+}
+
+function updateProgress() {
+  const pct = ((idx + 1) / questions.length * 100).toFixed(1);
+  document.getElementById('prog-bar').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = `${idx + 1} / ${questions.length}`;
+}
+
+function showResult() {
+  document.getElementById('quiz-card').style.display = 'none';
+  document.getElementById('prog-label').style.display = 'none';
+  document.getElementById('prog-bar').parentElement.style.display = 'none';
+  const res = document.getElementById('result');
+  res.style.display = 'block';
+  document.getElementById('score-txt').textContent = `${score}/${questions.length}`;
+  const pct = score / questions.length;
+  const [title, msg] =
+    pct === 1     ? ['💯 완벽해요!', '모든 문제를 맞혔어요! 대단해요 😎'] :
+    pct >= 0.8    ? ['👏 훌륭해요!', '조금만 더 복습하면 완벽할 것 같아요!'] :
+    pct >= 0.6    ? ['🙂 잘했어요!', '교과서 대화문을 한 번 더 읽어봐요.'] :
+                    ["✏️ 더 연습해요!", "Don't 표현을 다시 한번 살펴볼까요?"];
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-msg').textContent = msg;
+}
+
+function restart() {
+  idx = 0; score = 0; answered = false;
+  document.getElementById('quiz-card').style.display = 'block';
+  document.getElementById('prog-label').style.display = 'block';
+  document.getElementById('prog-bar').parentElement.style.display = 'block';
+  document.getElementById('result').style.display = 'none';
+  updateProgress();
+  render();
+}
+
+// 초기 실행
+updateProgress();
+render();
+</script>
+</body>
+</html>
